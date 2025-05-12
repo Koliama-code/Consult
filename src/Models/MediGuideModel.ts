@@ -1,0 +1,162 @@
+import { ChatFireworks } from "@langchain/community/chat_models/fireworks";
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+interface SymptomData {
+    principal: string;
+    duree: string;
+    intensite: string;
+    symptomesAssocies: string[];
+    antecedents: string;
+    medicaments: string;
+    allergies: string;
+}
+
+export class MediGuideModel {
+    private static instance: MediGuideModel;
+    private model: ChatFireworks;
+    private systemPrompt: SystemMessage;
+    private currentStep: number = 0;
+    private symptomData: Partial<SymptomData> = {};
+    private readonly questions = [
+        "Quel est votre symptôme principal ? (ex: maux de tête, douleur abdominale...)",
+        "Depuis combien de temps ressentez-vous ce symptôme ?",
+        "Sur une échelle de 1 à 10, quelle est l'intensité de votre symptôme ?",
+        "Quels autres symptômes associez-vous à ce problème ? (liste séparée par des virgules)",
+        "Avez-vous des antécédents médicaux pertinents ?",
+        "Prenez-vous actuellement des médicaments ? Lesquels ?",
+        "Avez-vous des allergies connues ?"
+    ];
+
+    private constructor() {
+        const apiKey = process.env.FIREWORKS_API_KEY;
+        if (!apiKey) {
+            throw new Error("FIREWORKS_API_KEY is not set in environment variables");
+        }
+
+        this.model = new ChatFireworks({
+            apiKey,
+            model: "accounts/fireworks/models/llama-v3-70b-instruct",
+            temperature: 0.7,
+            maxTokens: 2000,
+        });
+
+        this.systemPrompt = new SystemMessage(`Tu es un assistant médical virtuel professionnel spécialisé dans le diagnostic préliminaire.
+
+        Contexte : Tu opères en République Démocratique du Congo (RDC) et dois adapter tes réponses au contexte médical local.
+
+        Après avoir analysé les 7 informations clés du patient, tu dois fournir une réponse structurée comme suit :
+
+        1. SYNTHÈSE DES SYMPTÔMES
+        - Résumer clairement les informations principales
+        - Mettre en évidence les points d'attention
+
+        2. DIAGNOSTIC PRÉLIMINAIRE
+        - Proposer 2-3 hypothèses diagnostiques probables
+        - Expliquer brièvement chaque hypothèse
+        - Indiquer le niveau de certitude
+
+        3. RECOMMANDATIONS
+        - Niveau d'urgence : immédiat / 48h / surveillance
+        - Actions immédiates à prendre
+        - Examens complémentaires conseillés
+        - Mesures de prévention
+
+        4. ORIENTATION MÉDICALE
+        - Type de spécialiste recommandé
+        - Justification du choix du spécialiste
+        - Conseils pour la consultation
+
+        5. CONSEILS PRATIQUES
+        Soulagement des symptômes : appliquer des compresses chaudes sur les yeux pour réduire la fatigue, prendre des pauses régulières pour se reposer les yeux.
+        Précautions à prendre : éviter les activités qui peuvent augmenter la fatigue, protéger les yeux du soleil.
+        Signes d'aggravation à surveiller : perte de vision, douleur oculaire, rougeur ou sensibilité à la lumière.
+
+        Style de communication :
+        - Utiliser un ton professionnel et empathique
+        - Expliquer les termes médicaux en langage simple
+        - Adapter les recommandations au contexte local
+        - Être précis et factuel dans les explications
+        - Ne pas utiliser d'astérisques dans la réponse`);
+    }
+
+    public static async getInstance(): Promise<MediGuideModel> {
+        if (!MediGuideModel.instance) {
+            MediGuideModel.instance = new MediGuideModel();
+        }
+        return MediGuideModel.instance;
+    }
+
+    public getCurrentQuestion(): string {
+        return this.currentStep < this.questions.length ? this.questions[this.currentStep] : "";
+    }
+
+    public async processAnswer(answer: string): Promise<{ question: string | null; diagnostic?: string }> {
+        if (!answer.trim()) {
+            throw new Error("Answer cannot be empty");
+        }
+
+        if (this.currentStep >= this.questions.length) {
+            return { question: null };
+        }
+
+        this.saveAnswer(answer);
+        this.currentStep++;
+
+        if (this.currentStep < this.questions.length) {
+            return { question: this.getCurrentQuestion() };
+        } else {
+            const diagnostic = await this.generateDiagnostic();
+            return { question: null, diagnostic };
+        }
+    }
+
+    private saveAnswer(answer: string): void {
+        switch (this.currentStep) {
+            case 0: this.symptomData.principal = answer; break;
+            case 1: this.symptomData.duree = answer; break;
+            case 2: this.symptomData.intensite = answer; break;
+            case 3: this.symptomData.symptomesAssocies = answer.split(',').map(s => s.trim()); break;
+            case 4: this.symptomData.antecedents = answer; break;
+            case 5: this.symptomData.medicaments = answer; break;
+            case 6: this.symptomData.allergies = answer; break;
+        }
+    }
+
+    private async generateDiagnostic(): Promise<string> {
+        const prompt = `Sur la base des informations suivantes:
+        
+        Symptôme principal: ${this.symptomData.principal}
+        Durée: ${this.symptomData.duree}
+        Intensité: ${this.symptomData.intensite}/10
+        Symptômes associés: ${this.symptomData.symptomesAssocies?.join(', ')}
+        Antécédents: ${this.symptomData.antecedents}
+        Médicaments: ${this.symptomData.medicaments}
+        Allergies: ${this.symptomData.allergies}
+
+        Fournis une analyse structurée avec:
+        1. Un diagnostic différentiel en 3 points maximum
+        2. Des recommandations adaptées
+        3. Le degré d'urgence (consultation immédiate/sous 48h/surveillance)
+        4. Des conseils pour le soulagement des symptômes
+        
+        Important: Ne pas utiliser d'astérisques dans la réponse.`;
+
+        try {
+            const response = await this.model.invoke([this.systemPrompt, new HumanMessage(prompt)]);
+            return response.content as string;
+        } catch (error) {
+            console.error("Error generating diagnostic:", error);
+            throw new Error("Failed to generate diagnostic");
+        }
+    }
+
+    public resetQuestionnaire(): void {
+        this.currentStep = 0;
+        this.symptomData = {};
+    }
+}
+
+
