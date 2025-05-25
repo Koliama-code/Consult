@@ -19,7 +19,6 @@ const ForgotPassword = () => {
   const onSubmit = async (data: ForgotPasswordForm) => {
     setLoading(true);
     try {
-      // Check if email exists in any user type (admin, doctor, patient)
       const [adminResponse, doctorResponse, patientResponse] =
         await Promise.all([
           axios.get("http://localhost:3000/admin"),
@@ -35,21 +34,9 @@ const ForgotPassword = () => {
         (p: any) => p.email === data.email
       );
 
-      if (admin || doctor || patient) {
-        // Here you would typically:
-        // 1. Generate a reset token
-        // 2. Send an email with reset link
-        // 3. Save the token in the database with an expiration time
-
-        toast.success(
-          "Si un compte existe avec cet email, vous recevrez les instructions de réinitialisation."
-        );
-      } else {
-        // We still show a success message for security reasons
-        toast.success(
-          "Si un compte existe avec cet email, vous recevrez les instructions de réinitialisation."
-        );
-      }
+      toast.success(
+        "Si un compte existe avec cet email, vous recevrez les instructions de réinitialisation."
+      );
     } catch (error) {
       console.error("Password reset error:", error);
       toast.error("Une erreur est survenue. Veuillez réessayer plus tard.");
@@ -59,9 +46,9 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1a1f2b] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <Toaster />
-      <div className="bg-[#1e242f] p-8 rounded-lg w-full max-w-md">
+      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <svg
@@ -71,7 +58,7 @@ const ForgotPassword = () => {
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                d="M12 15V12M12 8.99999H12.01M5.07311 19.0731C3.01653 17.0165 2 14.4645 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 14.4645 20.9835 17.0165 18.9269 19.0731C16.8702 21.1298 14.3181 22.1463 11.8537 22.1463C9.38927 22.1463 6.83718 21.1298 4.78061 19.0731H5.07311Z"
+                d="M12 15V12M12 9H12.01M5.073 19.073C3.017 17.017 2 14.465 2 12 2 6.477 6.477 2 12 2s10 4.477 10 10c0 2.465-1.017 5.017-3.073 7.073C16.87 21.13 14.318 22.146 11.854 22.146c-2.464 0-5.016-1.017-7.073-3.073H5.073Z"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
@@ -79,10 +66,10 @@ const ForgotPassword = () => {
               />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">
             Mot de passe oublié
           </h1>
-          <p className="text-gray-400">
+          <p className="text-gray-600">
             Entrez votre email pour réinitialiser votre mot de passe
           </p>
         </div>
@@ -99,7 +86,7 @@ const ForgotPassword = () => {
               })}
               type="email"
               placeholder="Adresse e-mail"
-              className="w-full bg-[#2a303c] text-white rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-white border border-gray-300 text-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             {errors.email && (
               <p className="mt-1 text-sm text-red-500">
@@ -139,7 +126,7 @@ const ForgotPassword = () => {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-gray-400">
+        <p className="mt-6 text-center text-gray-600">
           <Link to="/login" className="text-blue-500 hover:underline">
             Retour à la connexion
           </Link>

@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Edit2, Trash2, Plus, Search } from "lucide-react";
 import toast from "react-hot-toast";
-
-// Add this import at the top
 import { signupDoctor } from "../../../Services/CreateDoctor/CreateDoctor";
 
 const DoctorsManagement = () => {
@@ -12,9 +10,7 @@ const DoctorsManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState<any>(null);
-  // Add these two missing states
   const [isAdding, setIsAdding] = useState(false);
-  // Update the initial state to remove Ordonnance
   const [newDoctorData, setNewDoctorData] = useState({
     noms: "",
     sexe: "",
@@ -26,8 +22,15 @@ const DoctorsManagement = () => {
     disponibilite: true,
     diagnosticPatient: [],
   });
+  const [formData, setFormData] = useState({
+    noms: "",
+    specialite: "",
+    email: "",
+    phone: "",
+    password: "",
+  });
+  const [specialties, setSpecialties] = useState<string[]>([]);
 
-  // Also update the reset state in handleAddDoctor
   const handleAddDoctor = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await signupDoctor(newDoctorData);
@@ -51,15 +54,7 @@ const DoctorsManagement = () => {
       toast.error(result.message);
     }
   };
-  const [formData, setFormData] = useState({
-    noms: "",
-    specialite: "",
-    email: "",
-    phone: "",
-    password: "",
-  });
 
-  // Add this new function
   const handleEdit = (doctor: any) => {
     setEditingDoctor(doctor);
     setFormData({
@@ -72,22 +67,16 @@ const DoctorsManagement = () => {
     setIsEditing(true);
   };
 
-  // Add this new function
-  // Update the handleUpdate function
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Make sure we have the correct ID
       const doctorId = editingDoctor._id || editingDoctor.id;
-
-      // Prepare the updated data
       const updatedDoctor = {
         ...editingDoctor,
         ...formData,
         disponibilite: editingDoctor.disponibilite || true,
       };
 
-      // Make the update request
       const response = await axios.put(
         `http://localhost:3000/doctors/${doctorId}`,
         updatedDoctor
@@ -104,11 +93,10 @@ const DoctorsManagement = () => {
     }
   };
 
-  // Also update the handleDelete function
   const handleDelete = async (id: number) => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer ce médecin ?")) {
       try {
-        await axios.delete(`http://localhost:3000/doctors/${id}`); // Remove /api/
+        await axios.delete(`http://localhost:3000/doctors/${id}`);
         toast.success("Médecin supprimé avec succès");
         fetchDoctors();
       } catch (error) {
@@ -118,10 +106,9 @@ const DoctorsManagement = () => {
     }
   };
 
-  // Update the fetchDoctors function to match the same endpoint pattern
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/doctors"); // Remove /api/
+      const response = await axios.get("http://localhost:3000/doctors");
       setDoctors(response.data);
       setLoading(false);
     } catch (error) {
@@ -139,10 +126,6 @@ const DoctorsManagement = () => {
     }));
   };
 
-  // Add this new state near the other state declarations
-  const [specialties, setSpecialties] = useState<string[]>([]);
-
-  // Add this function after fetchDoctors
   const fetchSpecialties = () => {
     const uniqueSpecialties = Array.from(
       new Set(doctors.map((doctor: any) => doctor.specialite))
@@ -150,7 +133,6 @@ const DoctorsManagement = () => {
     setSpecialties(uniqueSpecialties);
   };
 
-  // Update useEffect to include fetchSpecialties
   useEffect(() => {
     fetchDoctors();
   }, []);
@@ -166,18 +148,18 @@ const DoctorsManagement = () => {
   );
 
   if (loading) {
-    return <div className="text-white">Chargement...</div>;
+    return <div className="text-gray-800">Chargement...</div>;
   }
 
   return (
-    <div>
+    <div className="bg-white rounded-lg p-6 shadow-sm">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-white">
+        <h2 className="text-2xl font-semibold text-gray-800">
           Gestion des Médecins
         </h2>
         <button
           onClick={() => setIsAdding(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Plus size={20} />
           Ajouter un médecin
@@ -193,13 +175,13 @@ const DoctorsManagement = () => {
           placeholder="Rechercher par nom ou spécialité..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 bg-[#1e242f] text-white rounded-lg outline-none focus:ring-2 focus:ring-blue-500 border border-gray-700"
+          className="w-full pl-10 pr-4 py-2 bg-gray-50 text-gray-800 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
         />
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-left">
-          <thead className="text-gray-400 border-b border-gray-700">
+          <thead className="text-gray-600 border-b border-gray-200">
             <tr>
               <th className="py-3 px-4">Nom</th>
               <th className="py-3 px-4">Spécialité</th>
@@ -208,9 +190,12 @@ const DoctorsManagement = () => {
               <th className="py-3 px-4">Actions</th>
             </tr>
           </thead>
-          <tbody className="text-gray-300">
+          <tbody className="text-gray-700">
             {filteredDoctors.map((doctor: any) => (
-              <tr key={doctor.id} className="border-b border-gray-700">
+              <tr
+                key={doctor.id}
+                className="border-b border-gray-200 hover:bg-gray-50"
+              >
                 <td className="py-3 px-4">{doctor.noms}</td>
                 <td className="py-3 px-4">{doctor.specialite}</td>
                 <td className="py-3 px-4">{doctor.email}</td>
@@ -218,13 +203,13 @@ const DoctorsManagement = () => {
                 <td className="py-3 px-4">
                   <div className="flex gap-2">
                     <button
-                      className="text-blue-500 hover:text-blue-600"
+                      className="text-blue-600 hover:text-blue-800 transition-colors"
                       onClick={() => handleEdit(doctor)}
                     >
                       <Edit2 size={18} />
                     </button>
                     <button
-                      className="text-red-500 hover:text-red-600"
+                      className="text-red-600 hover:text-red-800 transition-colors"
                       onClick={() => handleDelete(doctor.id)}
                     >
                       <Trash2 size={18} />
@@ -236,7 +221,7 @@ const DoctorsManagement = () => {
           </tbody>
         </table>
         {filteredDoctors.length === 0 && (
-          <div className="text-center text-gray-400 py-4">
+          <div className="text-center text-gray-500 py-4">
             Aucun médecin trouvé
           </div>
         )}
@@ -244,28 +229,28 @@ const DoctorsManagement = () => {
 
       {isEditing && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-[#2a303c] p-6 rounded-lg w-full max-w-md">
-            <h3 className="text-xl font-semibold text-white mb-4">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-xl">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
               Modifier le médecin
             </h3>
             <form onSubmit={handleUpdate} className="space-y-4">
               <div>
-                <label className="block text-gray-400 mb-1">Nom complet</label>
+                <label className="block text-gray-600 mb-1">Nom complet</label>
                 <input
                   type="text"
                   name="noms"
                   value={formData.noms}
                   onChange={handleChange}
-                  className="w-full bg-[#1e242f] text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-gray-50 text-gray-800 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
                 />
               </div>
               <div>
-                <label className="block text-gray-400 mb-1">Spécialité</label>
+                <label className="block text-gray-600 mb-1">Spécialité</label>
                 <select
                   name="specialite"
                   value={formData.specialite}
                   onChange={handleChange as any}
-                  className="w-full bg-[#1e242f] text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-gray-50 text-gray-800 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
                 >
                   <option value="">Sélectionner une spécialité</option>
                   {specialties.map((specialty, index) => (
@@ -276,37 +261,37 @@ const DoctorsManagement = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-gray-400 mb-1">Email</label>
+                <label className="block text-gray-600 mb-1">Email</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full bg-[#1e242f] text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-gray-50 text-gray-800 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
                 />
               </div>
               <div>
-                <label className="block text-gray-400 mb-1">Téléphone</label>
+                <label className="block text-gray-600 mb-1">Téléphone</label>
                 <input
                   type="text"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full bg-[#1e242f] text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-gray-50 text-gray-800 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
                 />
               </div>
 
               <div className="flex gap-4 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 text-white rounded-lg py-2 hover:bg-blue-700"
+                  className="flex-1 bg-blue-600 text-white rounded-lg py-2 hover:bg-blue-700 transition-colors"
                 >
                   Enregistrer
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="flex-1 bg-gray-600 text-white rounded-lg py-2 hover:bg-gray-700"
+                  className="flex-1 bg-gray-200 text-gray-800 rounded-lg py-2 hover:bg-gray-300 transition-colors"
                 >
                   Annuler
                 </button>
@@ -318,31 +303,31 @@ const DoctorsManagement = () => {
 
       {isAdding && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-[#2a303c] p-6 rounded-lg w-full max-w-md">
-            <h3 className="text-xl font-semibold text-white mb-6">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-xl">
+            <h3 className="text-xl font-semibold text-gray-800 mb-6">
               Ajouter un nouveau médecin
             </h3>
             <form onSubmit={handleAddDoctor} className="space-y-5">
               <div>
-                <label className="block text-gray-400 mb-2">Nom complet</label>
+                <label className="block text-gray-600 mb-2">Nom complet</label>
                 <input
                   type="text"
                   value={newDoctorData.noms}
                   onChange={(e) =>
                     setNewDoctorData({ ...newDoctorData, noms: e.target.value })
                   }
-                  className="w-full h-11 bg-[#1e242f] text-white rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-11 bg-gray-50 text-gray-800 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
                   required
                 />
               </div>
               <div>
-                <label className="block text-gray-400 mb-2">Sexe</label>
+                <label className="block text-gray-600 mb-2">Sexe</label>
                 <select
                   value={newDoctorData.sexe}
                   onChange={(e) =>
                     setNewDoctorData({ ...newDoctorData, sexe: e.target.value })
                   }
-                  className="w-full h-11 bg-[#1e242f] text-white rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-11 bg-gray-50 text-gray-800 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
                   required
                 >
                   <option value="">Sélectionner</option>
@@ -351,7 +336,7 @@ const DoctorsManagement = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-gray-400 mb-2">Spécialité</label>
+                <label className="block text-gray-600 mb-2">Spécialité</label>
                 <div className="flex gap-2">
                   <select
                     value={newDoctorData.specialite}
@@ -361,7 +346,7 @@ const DoctorsManagement = () => {
                         specialite: e.target.value,
                       })
                     }
-                    className="w-1/2 h-11 bg-[#1e242f] text-white rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-1/2 h-11 bg-gray-50 text-gray-800 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
                   >
                     <option value="">Sélectionner une spécialité</option>
                     {specialties.map((specialty, index) => (
@@ -379,12 +364,12 @@ const DoctorsManagement = () => {
                         specialite: e.target.value,
                       })
                     }
-                    className="w-1/2 h-11 bg-[#1e242f] text-white rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-1/2 h-11 bg-gray-50 text-gray-800 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-gray-400 mb-2">Email</label>
+                <label className="block text-gray-600 mb-2">Email</label>
                 <input
                   type="email"
                   value={newDoctorData.email}
@@ -394,12 +379,12 @@ const DoctorsManagement = () => {
                       email: e.target.value,
                     })
                   }
-                  className="w-full h-11 bg-[#1e242f] text-white rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-11 bg-gray-50 text-gray-800 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
                   required
                 />
               </div>
               <div>
-                <label className="block text-gray-400 mb-2">Téléphone</label>
+                <label className="block text-gray-600 mb-2">Téléphone</label>
                 <input
                   type="text"
                   value={newDoctorData.phone}
@@ -409,12 +394,12 @@ const DoctorsManagement = () => {
                       phone: e.target.value,
                     })
                   }
-                  className="w-full h-11 bg-[#1e242f] text-white rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-11 bg-gray-50 text-gray-800 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
                   required
                 />
               </div>
               <div>
-                <label className="block text-gray-400 mb-2">Mot de passe</label>
+                <label className="block text-gray-600 mb-2">Mot de passe</label>
                 <input
                   type="password"
                   value={newDoctorData.password}
@@ -424,12 +409,12 @@ const DoctorsManagement = () => {
                       password: e.target.value,
                     })
                   }
-                  className="w-full h-11 bg-[#1e242f] text-white rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-11 bg-gray-50 text-gray-800 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
                   required
                 />
               </div>
               <div>
-                <label className="block text-gray-400 mb-2">Adresse</label>
+                <label className="block text-gray-600 mb-2">Adresse</label>
                 <input
                   type="text"
                   value={newDoctorData.adresse}
@@ -439,21 +424,21 @@ const DoctorsManagement = () => {
                       adresse: e.target.value,
                     })
                   }
-                  className="w-full h-11 bg-[#1e242f] text-white rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-11 bg-gray-50 text-gray-800 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
                   required
                 />
               </div>
               <div className="flex gap-4 mt-8">
                 <button
                   type="submit"
-                  className="flex-1 h-11 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="flex-1 h-11 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Ajouter
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsAdding(false)}
-                  className="flex-1 h-11 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+                  className="flex-1 h-11 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
                 >
                   Annuler
                 </button>

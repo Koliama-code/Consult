@@ -1,5 +1,6 @@
 import { Calendar, Clock, X, User, MapPin } from "lucide-react";
 import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 
 interface Appointment {
   doctorName: string;
@@ -23,12 +24,10 @@ function Appointments() {
       const appointment = appointments[index];
       const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-      // Supprimer de la table des rendez-vous
       const newAppointments = appointments.filter((_, i) => i !== index);
       setAppointments(newAppointments);
       localStorage.setItem("appointments", JSON.stringify(newAppointments));
 
-      // Supprimer de la table diagnostic
       await fetch(`/api/diagnostics/${user.id}`, {
         method: "DELETE",
         headers: {
@@ -40,7 +39,6 @@ function Appointments() {
         }),
       });
 
-      // Mettre à jour le statut dans la table médecin
       await fetch(`/api/doctors/appointments/${appointment.doctorName}`, {
         method: "DELETE",
         headers: {
@@ -61,26 +59,28 @@ function Appointments() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-[#1e242f] rounded-xl p-6">
-        <h2 className="text-2xl font-bold text-white mb-6">Mes Rendez-vous</h2>
+      <div className="bg-white rounded-xl p-6 shadow-md">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          Mes Rendez-vous
+        </h2>
         <div className="space-y-4">
           {appointments.length === 0 ? (
-            <p className="text-gray-400">Aucun rendez-vous programmé</p>
+            <p className="text-gray-500">Aucun rendez-vous programmé</p>
           ) : (
             appointments.map((appointment, index) => (
               <div
                 key={index}
-                className="flex justify-between items-center bg-[#2a303c] p-6 rounded-xl text-white border border-gray-700 hover:border-blue-500 transition-all duration-300"
+                className="flex justify-between items-center bg-gray-100 p-6 rounded-xl text-gray-900 border border-gray-200 hover:border-blue-500 transition-all duration-300"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center">
-                    <User className="w-6 h-6 text-blue-500" />
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <User className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
                     <p className="font-semibold text-lg">
                       Dr. {appointment.doctorName}
                     </p>
-                    <p className="text-sm text-gray-400 flex items-center gap-2">
+                    <p className="text-sm text-gray-600 flex items-center gap-2">
                       <MapPin className="w-4 h-4" />
                       {appointment.specialite}
                     </p>
@@ -89,11 +89,11 @@ function Appointments() {
 
                 <div className="flex items-center gap-8">
                   <div className="text-right">
-                    <p className="flex items-center gap-2 text-blue-400">
+                    <p className="flex items-center gap-2 text-blue-600 font-medium">
                       <Calendar className="w-4 h-4" />
                       {appointment.date}
                     </p>
-                    <p className="text-sm text-gray-400 flex items-center gap-2 mt-1">
+                    <p className="text-sm text-gray-600 flex items-center gap-2 mt-1">
                       <Clock className="w-4 h-4" />
                       {appointment.time}
                     </p>
@@ -101,7 +101,7 @@ function Appointments() {
 
                   <button
                     onClick={() => handleCancelAppointment(index)}
-                    className="bg-red-500/10 text-red-500 px-6 py-3 rounded-lg hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center gap-2"
+                    className="bg-red-100 text-red-600 px-6 py-3 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 flex items-center gap-2"
                   >
                     <X className="w-4 h-4" />
                     Annuler

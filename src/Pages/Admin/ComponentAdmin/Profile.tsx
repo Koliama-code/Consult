@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { 
-  Save, 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  UserCircle, 
-  Edit2, 
-  X, 
+import {
+  Save,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  UserCircle,
+  Edit2,
+  X,
   AlertCircle,
-  Shield 
+  Shield,
 } from "lucide-react";
 import Admin from "../../../Types/Admin";
 import toast from "react-hot-toast";
@@ -42,6 +42,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
       email: "",
       phone: "",
       adresse: "",
+      sexe: "",
     };
     let isValid = true;
 
@@ -57,8 +58,6 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
       newErrors.adresse = "L'adresse ne peut pas être vide";
       isValid = false;
     }
-
-    // Add sex validation in validateForm
     if (!["M", "F"].includes(formData.sexe)) {
       newErrors.sexe = "Le sexe doit être 'M' ou 'F'";
       isValid = false;
@@ -69,7 +68,9 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -90,8 +91,8 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     type: "text" | "email" = "text"
   ) => {
     return (
-      <div className="bg-[#1e242f] p-4 rounded-lg hover:border-blue-500 border border-transparent transition-all duration-300">
-        <label className="block text-gray-400 text-sm mb-2 flex items-center gap-2">
+      <div className="bg-gray-50 p-4 rounded-lg hover:border-blue-500 border border-gray-200 transition-all duration-300">
+        <label className="block text-gray-600 text-sm mb-2 flex items-center gap-2">
           {icon}
           {label}
         </label>
@@ -102,10 +103,10 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
               name={name}
               value={value}
               onChange={handleChange}
-              className={`w-full bg-[#2a303c] text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 ${
+              className={`w-full bg-white text-gray-800 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 border ${
                 errors[name as keyof typeof errors]
                   ? "border-red-500 focus:ring-red-500"
-                  : "focus:ring-blue-500"
+                  : "border-gray-300 focus:ring-blue-500"
               }`}
             />
             {errors[name as keyof typeof errors] && (
@@ -115,7 +116,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
             )}
           </div>
         ) : (
-          <p className="text-white font-medium">{value}</p>
+          <p className="text-gray-800 font-medium">{value}</p>
         )}
       </div>
     );
@@ -129,9 +130,8 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     }
 
     try {
-      // Update the admin in the database
       const response = await fetch(`http://localhost:3000/admin/${user.id}`, {
-        method: "PUT", // Changed from PATCH to PUT
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -142,7 +142,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
           phone: formData.phone,
           adresse: formData.adresse,
           sexe: formData.sexe,
-          password: user.password // Keep the existing password
+          password: user.password,
         }),
       });
 
@@ -150,7 +150,6 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
         throw new Error("Erreur lors de la mise à jour");
       }
 
-      // Update local storage
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
         const parsedUser = JSON.parse(storedUser);
@@ -169,14 +168,17 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-        <UserCircle className="w-6 h-6 text-blue-500" />
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <UserCircle className="w-6 h-6 text-blue-600" />
         Mon Profil
       </h2>
 
-      <form onSubmit={handleSubmit} className="bg-[#2a303c] rounded-xl p-8 space-y-8 border border-gray-700">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white rounded-xl p-8 space-y-8 shadow-sm border border-gray-200"
+      >
         {error && (
-          <div className="bg-red-500/10 text-red-500 p-4 rounded-lg flex items-center gap-2">
+          <div className="bg-red-100 text-red-600 p-4 rounded-lg flex items-center gap-2 border border-red-200">
             <AlertCircle className="w-5 h-5" />
             {error}
           </div>
@@ -187,8 +189,10 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
             {formData.noms[0]}
           </div>
           <div>
-            <h3 className="text-2xl font-semibold text-white">{formData.noms}</h3>
-            <p className="text-gray-400 flex items-center gap-2 mt-1">
+            <h3 className="text-2xl font-semibold text-gray-800">
+              {formData.noms}
+            </h3>
+            <p className="text-gray-600 flex items-center gap-2 mt-1">
               <Shield className="w-4 h-4" />
               Administrateur
             </p>
@@ -196,10 +200,15 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {renderField("Nom complet", "noms", formData.noms, <User className="w-4 h-4 text-purple-400" />)}
-          <div className="bg-[#1e242f] p-4 rounded-lg hover:border-blue-500 border border-transparent transition-all duration-300">
-            <label className="block text-gray-400 text-sm mb-2 flex items-center gap-2">
-              <User className="w-4 h-4 text-yellow-400" />
+          {renderField(
+            "Nom complet",
+            "noms",
+            formData.noms,
+            <User className="w-4 h-4 text-purple-600" />
+          )}
+          <div className="bg-gray-50 p-4 rounded-lg hover:border-blue-500 border border-gray-200 transition-all duration-300">
+            <label className="block text-gray-600 text-sm mb-2 flex items-center gap-2">
+              <User className="w-4 h-4 text-yellow-600" />
               Sexe
             </label>
             {isEditing ? (
@@ -207,9 +216,11 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                 <select
                   name="sexe"
                   value={formData.sexe}
-                  onChange={handleChange as any}
-                  className={`w-full bg-[#2a303c] text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 ${
-                    errors.sexe ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
+                  onChange={handleChange}
+                  className={`w-full bg-white text-gray-800 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 border ${
+                    errors.sexe
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-blue-500"
                   }`}
                 >
                   <option value="">Sélectionner</option>
@@ -221,22 +232,42 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                 )}
               </div>
             ) : (
-              <p className="text-white font-medium">
-                {formData.sexe === "M" ? "Masculin" : formData.sexe === "F" ? "Féminin" : "Non spécifié"}
+              <p className="text-gray-800 font-medium">
+                {formData.sexe === "M"
+                  ? "Masculin"
+                  : formData.sexe === "F"
+                  ? "Féminin"
+                  : "Non spécifié"}
               </p>
             )}
           </div>
-          {renderField("Email", "email", formData.email, <Mail className="w-4 h-4 text-blue-400" />, "email")}
-          {renderField("Téléphone", "phone", formData.phone, <Phone className="w-4 h-4 text-green-400" />)}
-          {renderField("Adresse", "adresse", formData.adresse, <MapPin className="w-4 h-4 text-red-400" />)}
+          {renderField(
+            "Email",
+            "email",
+            formData.email,
+            <Mail className="w-4 h-4 text-blue-600" />,
+            "email"
+          )}
+          {renderField(
+            "Téléphone",
+            "phone",
+            formData.phone,
+            <Phone className="w-4 h-4 text-green-600" />
+          )}
+          {renderField(
+            "Adresse",
+            "adresse",
+            formData.adresse,
+            <MapPin className="w-4 h-4 text-red-600" />
+          )}
         </div>
 
-        <div className="pt-6 border-t border-gray-700">
+        <div className="pt-6 border-t border-gray-200">
           {isEditing ? (
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="flex-1 bg-green-600 text-white rounded-lg py-3 hover:bg-green-700 transition-all duration-300 flex items-center justify-center gap-2 font-medium"
+                className="flex-1 bg-green-600 text-white rounded-lg py-3 hover:bg-green-700 transition-all duration-300 flex items-center justify-center gap-2 font-medium shadow-sm"
               >
                 <Save className="w-4 h-4" />
                 Enregistrer
@@ -244,17 +275,17 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
               <button
                 type="button"
                 onClick={() => {
-                    setIsEditing(false);
-                    setError("");
-                    setFormData({
-                      noms: user.noms,
-                      email: user.email,
-                      phone: user.phone,
-                      adresse: user.adresse,
-                      sexe: user.sexe,
-                    });
-                  }}
-                className="flex-1 bg-red-600 text-white rounded-lg py-3 hover:bg-red-700 transition-all duration-300 flex items-center justify-center gap-2 font-medium"
+                  setIsEditing(false);
+                  setError("");
+                  setFormData({
+                    noms: user.noms,
+                    email: user.email,
+                    phone: user.phone,
+                    adresse: user.adresse,
+                    sexe: user.sexe,
+                  });
+                }}
+                className="flex-1 bg-gray-200 text-gray-800 rounded-lg py-3 hover:bg-gray-300 transition-all duration-300 flex items-center justify-center gap-2 font-medium shadow-sm"
               >
                 <X className="w-4 h-4" />
                 Annuler
@@ -264,7 +295,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
             <button
               type="button"
               onClick={() => setIsEditing(true)}
-              className="w-full bg-blue-600 text-white rounded-lg py-3 hover:bg-blue-700 transition-all duration-300 flex items-center justify-center gap-2 font-medium"
+              className="w-full bg-blue-600 text-white rounded-lg py-3 hover:bg-blue-700 transition-all duration-300 flex items-center justify-center gap-2 font-medium shadow-sm"
             >
               <Edit2 className="w-4 h-4" />
               Modifier mon profil

@@ -37,17 +37,17 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1a1f2e] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <Toaster />
-      <div className="w-full max-w-md bg-[#1e2536] rounded-lg p-8">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8">
         <div className="flex flex-col items-center mb-6">
           <div className="text-blue-500 mb-4">
             <svg className="w-12 h-12" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-6h2v2h-2v-2zm0-8h2v6h-2V6z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-white">Créer un compte</h2>
-          <p className="text-gray-400 text-sm mt-2">
+          <h2 className="text-2xl font-bold text-gray-800">Créer un compte</h2>
+          <p className="text-gray-500 text-sm mt-2">
             Rejoignez MediConsult dès aujourd'hui
           </p>
         </div>
@@ -63,7 +63,7 @@ const Signup: React.FC = () => {
             })}
             type="text"
             placeholder="Nom complet"
-            className="w-full bg-[#262d3d] text-white px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-white border border-gray-300 text-gray-800 px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           {errors.noms && (
             <p className="text-red-500 text-sm">{errors.noms.message}</p>
@@ -71,7 +71,7 @@ const Signup: React.FC = () => {
 
           <select
             {...register("sexe", { required: "Le sexe est requis" })}
-            className="w-full bg-[#262d3d] text-white px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-white border border-gray-300 text-gray-800 px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <option value="">Sélectionnez le sexe</option>
             <option value="M">Masculin</option>
@@ -83,7 +83,7 @@ const Signup: React.FC = () => {
 
           <input
             {...register("phone", {
-              required: "Le téléphone est               requis",
+              required: "Le téléphone est requis",
               pattern: {
                 value: /^[0-9]+$/,
                 message: "Numéro de téléphone invalide",
@@ -91,7 +91,7 @@ const Signup: React.FC = () => {
             })}
             type="tel"
             placeholder="Téléphone"
-            className="w-full bg-[#262d3d] text-white px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-white border border-gray-300 text-gray-800 px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           {errors.phone && (
             <p className="text-red-500 text-sm">{errors.phone.message}</p>
@@ -107,7 +107,7 @@ const Signup: React.FC = () => {
             })}
             type="email"
             placeholder="Email"
-            className="w-full bg-[#262d3d] text-white px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-white border border-gray-300 text-gray-800 px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           {errors.email && (
             <p className="text-red-500 text-sm">{errors.email.message}</p>
@@ -123,7 +123,7 @@ const Signup: React.FC = () => {
             })}
             type="password"
             placeholder="Mot de passe"
-            className="w-full bg-[#262d3d] text-white px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-white border border-gray-300 text-gray-800 px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           {errors.password && (
             <p className="text-red-500 text-sm">{errors.password.message}</p>
@@ -133,7 +133,7 @@ const Signup: React.FC = () => {
             {...register("adresse", { required: "L'adresse est requise" })}
             type="text"
             placeholder="Adresse"
-            className="w-full bg-[#262d3d] text-white px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-white border border-gray-300 text-gray-800 px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           {errors.adresse && (
             <p className="text-red-500 text-sm">{errors.adresse.message}</p>
@@ -146,7 +146,7 @@ const Signup: React.FC = () => {
             })}
             type="number"
             placeholder="Âge"
-            className="w-full bg-[#262d3d] text-white px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-white border border-gray-300 text-gray-800 px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           {errors.age && (
             <p className="text-red-500 text-sm">{errors.age.message}</p>
@@ -161,7 +161,7 @@ const Signup: React.FC = () => {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-gray-400">
+        <p className="mt-6 text-center text-gray-600">
           Déjà un compte ?{" "}
           <a href="/login" className="text-blue-500 hover:underline">
             Se connecter

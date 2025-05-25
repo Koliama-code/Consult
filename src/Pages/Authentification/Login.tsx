@@ -127,14 +127,14 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1a1f2b] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <Toaster />
-      <div className="bg-[#1e242f] p-8 rounded-lg w-full max-w-md">
+      <div className="bg-white p-8 rounded-2xl w-full max-w-md shadow-lg">
         {/* Logo et Titre */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <svg
-              className="w-12 h-12 text-blue-500"
+              className="w-12 h-12 text-blue-600"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -155,11 +155,12 @@ const Login = () => {
               />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
             Connexion à MediConsult
           </h1>
-          <p className="text-gray-400">Accédez à votre espace personnel</p>
+          <p className="text-gray-500">Accédez à votre espace personnel</p>
         </div>
+
         {/* Formulaire */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
@@ -173,7 +174,7 @@ const Login = () => {
               })}
               type="email"
               placeholder="Adresse e-mail"
-              className="w-full bg-[#2a303c] text-white rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.email && (
               <p className="mt-1 text-sm text-red-500">
@@ -194,12 +195,12 @@ const Login = () => {
               })}
               type={showPassword ? "text" : "password"}
               placeholder="Mot de passe"
-              className="w-full bg-[#2a303c] text-white rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -211,10 +212,10 @@ const Login = () => {
           </div>
 
           <div className="flex items-center justify-between">
-            <label className="flex items-center space-x-2 text-sm"></label>
+            <span></span>
             <Link
               to="/forgot-password"
-              className="text-blue-500 text-sm hover:underline"
+              className="text-blue-600 text-sm hover:underline"
             >
               Mot de passe oublié ?
             </Link>
@@ -223,7 +224,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white rounded-lg py-3 font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-blue-600 text-white rounded-lg py-3 font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <div className="flex items-center justify-center">
@@ -250,20 +251,21 @@ const Login = () => {
             )}
           </button>
         </form>
+
         {/* Séparateur */}
         <div className="relative my-8">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-700"></div>
+            <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-[#1e242f] text-gray-400">ou</span>
+            <span className="px-2 bg-white text-gray-500">ou</span>
           </div>
         </div>
-        {/* Connexion Google */}
 
+        {/* Connexion Google */}
         <button
           onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-2 bg-[#2a303c] text-white rounded-lg py-3 hover:bg-[#2f3643] transition-colors"
+          className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 rounded-lg py-3 hover:bg-gray-100 transition-colors"
         >
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -272,10 +274,11 @@ const Login = () => {
           />
           <span>Continuer avec Google</span>
         </button>
+
         {/* Lien d'inscription */}
-        <p className="mt-6 text-center text-gray-400">
+        <p className="mt-6 text-center text-gray-600">
           Pas encore de compte ?{" "}
-          <Link to="/Signup" className="text-blue-500 hover:underline">
+          <Link to="/Signup" className="text-blue-600 hover:underline">
             S'inscrire
           </Link>
         </p>

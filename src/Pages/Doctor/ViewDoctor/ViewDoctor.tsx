@@ -4,10 +4,8 @@ import {
   Stethoscope,
   ClipboardList,
   Calendar,
-  Sun,
   LogOut,
   Bell,
-  Moon,
   LucideHistory,
   User,
 } from "lucide-react";
@@ -18,10 +16,8 @@ import AppointmentDoctor from "../DoctorComponent/AppointmentDoctor";
 import HistoryDoctor from "../DoctorComponent/HistoryDoctor";
 import Profile from "../DoctorComponent/Profile";
 import toast from "react-hot-toast";
-import { useAuth } from "../../../Context/AuthContext"; // Add this import
 
 const ViewDoctor: React.FC = () => {
-  const { theme, toggleTheme } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [doctor, setDoctor] = useState<Doctor | null>(null);
@@ -29,10 +25,8 @@ const ViewDoctor: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
     "diagnostics" | "appointments" | "history" | "profile"
   >("diagnostics");
-  // Add the new state here
   const [hasNewDiagnostics, setHasNewDiagnostics] = useState(false);
 
-  // Add the new effect here
   useEffect(() => {
     const checkNewDiagnostics = () => {
       if (doctor?.diagnosticPatient) {
@@ -80,14 +74,54 @@ const ViewDoctor: React.FC = () => {
     navigate("/login");
   };
 
+  const handleValidateDiagnostic = async (diagnosticId: string) => {
+    if (!doctor) return;
+
+    try {
+      await axios.patch(`http://localhost:3000/diagnostics/${diagnosticId}`, {
+        status: "traité",
+      });
+
+      const updatedDiagnostics = doctor.diagnosticPatient?.map((diag) =>
+        diag.id === diagnosticId ? { ...diag, status: "traité" } : diag
+      );
+
+      setDoctor({ ...doctor, diagnosticPatient: updatedDiagnostics || [] });
+      toast.success("Diagnostic validé avec succès !");
+    } catch (error) {
+      console.error("Erreur de validation du diagnostic:", error);
+      toast.error("Échec de validation du diagnostic.");
+    }
+  };
+
+  const handleRejectDiagnostic = async (diagnosticId: string) => {
+    if (!doctor) return;
+
+    try {
+      await axios.patch(`http://localhost:3000/diagnostics/${diagnosticId}`, {
+        status: "rejeté",
+      });
+
+      const updatedDiagnostics = doctor.diagnosticPatient?.map((diag) =>
+        diag.id === diagnosticId ? { ...diag, status: "rejeté" } : diag
+      );
+
+      setDoctor({ ...doctor, diagnosticPatient: updatedDiagnostics || [] });
+      toast.success("Diagnostic rejeté.");
+    } catch (error) {
+      console.error("Erreur de rejet du diagnostic:", error);
+      toast.error("Échec du rejet du diagnostic.");
+    }
+  };
+
   if (!location.state?.user) {
     return <Navigate to="/login" replace />;
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#1e242f] flex items-center justify-center">
-        <div className="text-white text-xl">Chargement...</div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-gray-800 text-xl">Chargement...</div>
       </div>
     );
   }
@@ -97,44 +131,32 @@ const ViewDoctor: React.FC = () => {
   }
 
   return (
-    <div
-      className={`flex h-screen ${
-        theme === "dark" ? "bg-[#1a1f2b]" : "bg-gray-100"
-      }`}
-    >
-      {/* Sidebar */}
-      <div
-        className={`w-64 ${
-          theme === "dark"
-            ? "bg-[#1a1f2b] border-gray-800"
-            : "bg-white border-gray-200"
-        } border-r p-6`}
-      >
-        {/* En-tête avec logo et titre */}
+    <div className="flex h-screen bg-gray-100 text-gray-900">
+      <div className="w-64 bg-white border-r border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-8">
           <Stethoscope className="text-blue-500 w-6 h-6" />
-          <h1 className="text-white text-xl font-semibold">Espace Médecin</h1>
+          <h1 className="text-blue-800 text-xl font-semibold">
+            Espace Médecin
+          </h1>
         </div>
 
-        {/* Profil utilisateur */}
-        <div className="flex items-center gap-4 mb-8 p-4 bg-[#2a303c] rounded-xl">
+        <div className="flex items-center gap-4 mb-8 p-4 bg-blue-50 rounded-xl">
           <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl">
             {doctor.noms[0]}
           </div>
           <div>
-            <h2 className="text-white font-medium">{doctor.noms}</h2>
-            <p className="text-gray-400 text-sm">Médecin</p>
+            <h2 className="text-blue-900 font-medium">{doctor.noms}</h2>
+            <p className="text-blue-600 text-sm">Médecin</p>
           </div>
         </div>
 
-        {/* Navigation */}
         <nav className="space-y-2">
           <button
             onClick={() => setActiveTab("diagnostics")}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
               activeTab === "diagnostics"
                 ? "bg-blue-600 text-white"
-                : "text-gray-400 hover:bg-[#2a303c] hover:text-white"
+                : "text-gray-600 hover:bg-blue-100 hover:text-blue-700"
             }`}
           >
             <ClipboardList className="w-5 h-5" />
@@ -145,7 +167,7 @@ const ViewDoctor: React.FC = () => {
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
               activeTab === "appointments"
                 ? "bg-blue-600 text-white"
-                : "text-gray-400 hover:bg-[#2a303c] hover:text-white"
+                : "text-gray-600 hover:bg-blue-100 hover:text-blue-700"
             }`}
           >
             <Calendar className="w-5 h-5" />
@@ -156,7 +178,7 @@ const ViewDoctor: React.FC = () => {
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
               activeTab === "history"
                 ? "bg-blue-600 text-white"
-                : "text-gray-400 hover:bg-[#2a303c] hover:text-white"
+                : "text-gray-600 hover:bg-blue-100 hover:text-blue-700"
             }`}
           >
             <LucideHistory className="w-5 h-5" />
@@ -167,21 +189,19 @@ const ViewDoctor: React.FC = () => {
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
               activeTab === "profile"
                 ? "bg-blue-600 text-white"
-                : "text-gray-400 hover:bg-[#2a303c] hover:text-white"
+                : "text-gray-600 hover:bg-blue-100 hover:text-blue-700"
             }`}
           >
             <User className="w-5 h-5" />
             Profile
           </button>
 
-          {/* Options en bas */}
           <div className="fixed bottom-6 w-52">
-            {/* Separator */}
-            <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-600 to-transparent mb-4"></div>
+            <div className="h-px w-full bg-gray-300 mb-4"></div>
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-[#2a303c] hover:text-white transition-all duration-300"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all duration-300"
             >
               <LogOut className="w-5 h-5" />
               Déconnexion
@@ -190,14 +210,8 @@ const ViewDoctor: React.FC = () => {
         </nav>
       </div>
 
-      {/* Main Content */}
-      <div
-        className={`flex-1 h-screen overflow-hidden ${
-          theme === "dark" ? "bg-[#1a1f2b]" : "bg-gray-50"
-        }`}
-      >
+      <div className="flex-1 h-screen overflow-hidden bg-gray-50">
         <div className="h-full flex flex-col">
-          {/* Header */}
           <div className="p-8 pb-0">
             <div className="flex justify-end items-center mb-8">
               <div className="flex items-center gap-4">
@@ -205,7 +219,7 @@ const ViewDoctor: React.FC = () => {
                   <button
                     className={`${
                       hasNewDiagnostics ? "text-red-500" : "text-gray-400"
-                    } hover:text-white transition-colors`}
+                    } hover:text-gray-600 transition-colors`}
                   >
                     <Bell className="w-5 h-5" />
                   </button>
@@ -217,71 +231,71 @@ const ViewDoctor: React.FC = () => {
                   <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
                     {doctor.noms[0]}
                   </div>
-                  <span className="text-white">{doctor.noms}</span>
+                  <span className="text-gray-800 font-medium">
+                    {doctor.noms}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Séparateur */}
-            <div className="border-b border-gray-700 mb-6"></div>
+            <div className="border-b border-gray-200 mb-6"></div>
 
-            {/* Dashboard Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-              <div className="bg-[#1e242f] p-6 rounded-2xl border border-[#2a2f37]">
+              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
                     <ClipboardList className="w-6 h-6 text-blue-500" />
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm">Total Diagnostics</p>
-                    <h3 className="text-2xl font-semibold text-white">
+                    <p className="text-gray-500 text-sm">Total Diagnostics</p>
+                    <h3 className="text-2xl font-semibold text-gray-900">
                       {doctor.diagnosticPatient?.length || 0}
                     </h3>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-[#1e242f] p-6 rounded-2xl border border-[#2a2f37]">
+              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
-                    <Calendar className="w-6  h-6 text-green-500" />
+                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <Calendar className="w-6 h-6 text-green-500" />
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm">Rendez-vous</p>
-                    <h3 className="text-2xl font-semibold text-white">
-                      {doctor.appointments?.length || 7}
+                    <p className="text-gray-500 text-sm">Rendez-vous</p>
+                    <h3 className="text-2xl font-semibold text-gray-900">
+                      {doctor.appointments?.length || 0}
                     </h3>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-[#1e242f] p-6 rounded-2xl border border-[#2a2f37]">
+              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
                     <LucideHistory className="w-6 h-6 text-purple-500" />
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm">Diagnostics Traités</p>
-                    <h3 className="text-2xl font-semibold text-white">
+                    <p className="text-gray-500 text-sm">Diagnostics Traités</p>
+                    <h3 className="text-2xl font-semibold text-gray-900">
                       {doctor.diagnosticPatient?.filter(
                         (d) => d.status === "traité"
-                      ).length || 2}
+                      ).length || 0}
                     </h3>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-[#1e242f] p-6 rounded-2xl border border-[#2a2f37]">
+              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
                     <ClipboardList className="w-6 h-6 text-yellow-500" />
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm">En Attente</p>
-                    <h3 className="text-2xl font-semibold text-white">
+                    <p className="text-gray-500 text-sm">En Attente</p>
+                    <h3 className="text-2xl font-semibold text-gray-900">
                       {doctor.diagnosticPatient?.filter(
-                        (d) => d.status === "en attente"
-                      ).length || 5}
+                        (d) => d.status === "en_attente"
+                      ).length || 0}
                     </h3>
                   </div>
                 </div>
@@ -289,9 +303,8 @@ const ViewDoctor: React.FC = () => {
             </div>
           </div>
 
-          {/* Contenu défilable */}
           <div className="flex-1 overflow-y-auto p-8 pt-6">
-            <div className="bg-[#1e242f] rounded-lg p-6">
+            <div className="bg-white rounded-lg p-6 shadow">
               {activeTab === "diagnostics" && (
                 <DiagnosticDoctor
                   diagnostics={doctor.diagnosticPatient}
@@ -313,62 +326,3 @@ const ViewDoctor: React.FC = () => {
 };
 
 export default ViewDoctor;
-
-const handleValidateDiagnostic = async (patientId: number) => {
-  try {
-    // Make sure doctor is defined before using it
-    if (!currentDoctor) {
-      toast.error("Doctor information not available");
-      return;
-    }
-
-    const updatedDiagnostics = diagnostics.map((d) =>
-      d.patientId === patientId ? { ...d, status: "traité" } : d
-    );
-
-    const response = await fetch(
-      `http://localhost:3000/doctors/${currentDoctor.id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          diagnosticPatient: updatedDiagnostics,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to update diagnostic status");
-    }
-
-    setDiagnostics(updatedDiagnostics);
-    toast.success("Diagnostic validé avec succès");
-  } catch (error) {
-    console.error("Erreur lors de la validation:", error);
-    toast.error("Erreur lors de la validation du diagnostic");
-  }
-};
-
-const handleRejectDiagnostic = async (diagnosticId: number) => {
-  try {
-    const response = await axios.patch(
-      `http://localhost:3000/doctors/${doctor?.id}`,
-      {
-        ...doctor,
-        diagnosticPatient: doctor?.diagnosticPatient.filter(
-          (diagnostic) => diagnostic.patientId !== diagnosticId
-        ),
-      }
-    );
-
-    if (response.data) {
-      setDoctor(response.data);
-      toast.success("Diagnostic rejeté avec succès");
-    }
-  } catch (error) {
-    console.error("Erreur lors du rejet:", error);
-    toast.error("Erreur lors du rejet du diagnostic");
-  }
-};

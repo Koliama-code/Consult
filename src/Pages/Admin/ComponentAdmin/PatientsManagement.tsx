@@ -37,16 +37,16 @@ const PatientsManagement = () => {
   };
 
   if (loading) {
-    return <div className="text-white">Chargement...</div>;
+    return <div className="text-gray-800">Chargement...</div>;
   }
 
   return (
-    <div>
+    <div className="bg-white rounded-lg p-6 shadow-sm">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-white">
+        <h2 className="text-2xl font-semibold text-gray-800">
           Gestion des Patients
         </h2>
-        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
           <Plus size={20} />
           Ajouter un patient
         </button>
@@ -54,7 +54,7 @@ const PatientsManagement = () => {
 
       <div className="overflow-x-auto">
         <table className="w-full text-left">
-          <thead className="text-gray-400 border-b border-gray-700">
+          <thead className="text-gray-600 border-b border-gray-200">
             <tr>
               <th className="py-3 px-4">Nom</th>
               <th className="py-3 px-4">Age</th>
@@ -63,20 +63,23 @@ const PatientsManagement = () => {
               <th className="py-3 px-4">Actions</th>
             </tr>
           </thead>
-          <tbody className="text-gray-300">
+          <tbody className="text-gray-700">
             {patients.map((patient: any) => (
-              <tr key={patient.id} className="border-b border-gray-700">
+              <tr
+                key={patient.id}
+                className="border-b border-gray-200 hover:bg-gray-50"
+              >
                 <td className="py-3 px-4">{patient.noms}</td>
                 <td className="py-3 px-4">{patient.age}</td>
                 <td className="py-3 px-4">{patient.email}</td>
                 <td className="py-3 px-4">{patient.phone}</td>
                 <td className="py-3 px-4">
                   <div className="flex gap-2">
-                    <button className="text-blue-500 hover:text-blue-600">
+                    <button className="text-blue-600 hover:text-blue-800 transition-colors">
                       <Edit2 size={18} />
                     </button>
                     <button
-                      className="text-red-500 hover:text-red-600"
+                      className="text-red-600 hover:text-red-800 transition-colors"
                       onClick={() => handleDelete(patient.id)}
                     >
                       <Trash2 size={18} />
@@ -87,6 +90,11 @@ const PatientsManagement = () => {
             ))}
           </tbody>
         </table>
+        {patients.length === 0 && (
+          <div className="text-center text-gray-500 py-4">
+            Aucun patient trouvé
+          </div>
+        )}
       </div>
     </div>
   );

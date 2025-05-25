@@ -4,11 +4,11 @@ import {
   Stethoscope,
   FileText,
   PlusCircle,
-  Trash2, // Add this import
+  Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Patient from "../../../Types/Patient";
-import { toast } from "react-hot-toast"; // Add toast import
+import { toast } from "react-hot-toast";
 
 function History() {
   const [user, setUser] = useState<Patient | null>(null);
@@ -24,18 +24,15 @@ function History() {
     try {
       if (!user) return;
 
-      // Filter out the deleted ordonnance
       const updatedOrdonnances = user.Ordonnance.filter(
         (ord) => ord.id !== ordonnanceId
       );
 
-      // Update user data
       const updatedUser = {
         ...user,
         Ordonnance: updatedOrdonnances,
       };
 
-      // Update localStorage
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setUser(updatedUser);
 
@@ -48,11 +45,11 @@ function History() {
   if (!user || !user.Ordonnance || user.Ordonnance.length === 0) {
     return (
       <div className="space-y-6">
-        <div className="bg-[#1e242f] rounded-xl p-6">
-          <h2 className="text-2xl font-bold text-white mb-6">
+        <div className="bg-white rounded-xl p-6 shadow border border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">
             Historique Médical
           </h2>
-          <div className="text-gray-400">Aucun historique disponible</div>
+          <div className="text-gray-500">Aucun historique disponible</div>
         </div>
       </div>
     );
@@ -60,32 +57,32 @@ function History() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-[#1e242f] rounded-xl p-6">
-        <h2 className="text-2xl font-bold text-white mb-6">
+      <div className="bg-white rounded-xl p-6 shadow border border-gray-200">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">
           Historique Médical
         </h2>
         <div className="space-y-4">
           {user.Ordonnance.map((ordonnance, index) => (
             <div
               key={index}
-              className="bg-[#2a303c] p-6 rounded-xl text-white border border-gray-700 hover:border-blue-500 transition-all duration-300"
+              className="bg-gray-50 p-6 rounded-xl border border-gray-300 hover:border-blue-500 transition-all duration-300"
             >
               <div className="flex justify-between items-start">
                 <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
-                    <Stethoscope className="w-6 h-6 text-green-500" />
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <Stethoscope className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
-                    <p className="font-semibold text-lg">
+                    <p className="font-semibold text-lg text-gray-800">
                       Consultation {ordonnance.specialite || "Générale"}
                     </p>
-                    <div className="flex items-center gap-2 text-gray-400 mt-1">
+                    <div className="flex items-center gap-2 text-gray-500 mt-1">
                       <User className="w-4 h-4" />
                       <span className="text-sm">
                         Dr. {ordonnance.DoctorName}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-blue-400 mt-3">
+                    <div className="flex items-center gap-2 text-blue-600 mt-3">
                       <PlusCircle className="w-4 h-4" />
                       <p className="text-sm">
                         Diagnostic: {ordonnance.symptoms}
@@ -94,13 +91,13 @@ function History() {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 text-gray-400">
+                  <div className="flex items-center gap-2 text-gray-500">
                     <Calendar className="w-4 h-4" />
                     <p className="text-sm">{ordonnance.date}</p>
                   </div>
                   <button
                     onClick={() => handleDeleteHistory(ordonnance.id)}
-                    className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                    className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors"
                     title="Supprimer l'historique"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -108,11 +105,11 @@ function History() {
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-700">
-                <div className="flex items-start gap-2 text-gray-300">
-                  <FileText className="w-5 h-5 mt-0.5 text-orange-400" />
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <div className="flex items-start gap-2 text-gray-700">
+                  <FileText className="w-5 h-5 mt-0.5 text-orange-500" />
                   <div>
-                    <p className="text-sm font-medium text-orange-400 mb-1">
+                    <p className="text-sm font-medium text-orange-500 mb-1">
                       Prescription
                     </p>
                     <ul className="text-sm space-y-1">

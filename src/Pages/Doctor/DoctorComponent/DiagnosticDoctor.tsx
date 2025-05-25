@@ -16,10 +16,10 @@ import { toast } from "react-hot-toast";
 
 interface DiagnosticDoctorProps {
   diagnostics: PatientDiagnostic[];
-  onValidate: (patientId: number) => Promise<void>; // Changed to Promise
+  onValidate: (patientId: number) => Promise<void>;
   onReject: (patientId: number) => void;
   onUpdateSymptoms: (patientId: number, newSymptoms: string) => void;
-  onAppointmentCancel?: (patientId: number) => void; // Add this prop
+  onAppointmentCancel?: (patientId: number) => void;
 }
 
 const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
@@ -36,7 +36,6 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
   const [showOrdonnance, setShowOrdonnance] = useState(false);
   const [selectedDiagnostic, setSelectedDiagnostic] =
     useState<PatientDiagnostic | null>(null);
-  // Add new states here
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingDiagnostic, setEditingDiagnostic] =
     useState<PatientDiagnostic | null>(null);
@@ -59,16 +58,11 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
     }
 
     try {
-      // First validate/update the status
       await onValidate(diagnostic.patientId);
-
-      // Update the diagnostic status locally
       const updatedDiagnostic = {
         ...diagnostic,
         status: "traité",
       };
-
-      // Show ordonnance with updated diagnostic
       setSelectedDiagnostic(updatedDiagnostic);
       setShowOrdonnance(true);
     } catch (error) {
@@ -78,12 +72,9 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
   };
 
   const handleUpdateSymptoms = (patientId: number, newSymptoms: string) => {
-    // Update the diagnostics locally
     const updatedDiagnostics = diagnostics.map((d) =>
       d.patientId === patientId ? { ...d, symptoms: newSymptoms } : d
     );
-
-    // Update in parent component through onReject
     onReject(patientId);
   };
 
@@ -105,11 +96,11 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
   }, []);
 
   return (
-    <div className="bg-[#1e242f] rounded-lg p-6">
+    <div className="bg-white rounded-lg p-6 shadow-md">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
-          <ClipboardList className="w-6 h-6 text-blue-500" />
-          <h2 className="text-xl font-bold text-white">Diagnostics</h2>
+          <ClipboardList className="w-6 h-6 text-blue-600" />
+          <h2 className="text-xl font-bold text-gray-800">Diagnostics</h2>
         </div>
 
         <div className="flex gap-2">
@@ -118,7 +109,7 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
             className={`px-4 py-2 rounded flex items-center gap-2 ${
               statusFilter === "tous"
                 ? "bg-blue-600 text-white"
-                : "bg-[#2a303c] text-gray-400 hover:text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
             <ClipboardList className="w-4 h-4" />
@@ -129,7 +120,7 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
             className={`px-4 py-2 rounded flex items-center gap-2 ${
               statusFilter === "en_attente"
                 ? "bg-blue-600 text-white"
-                : "bg-[#2a303c] text-gray-400 hover:text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
             <Clock className="w-4 h-4" />
@@ -140,7 +131,7 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
             className={`px-4 py-2 rounded flex items-center gap-2 ${
               statusFilter === "traité"
                 ? "bg-blue-600 text-white"
-                : "bg-[#2a303c] text-gray-400 hover:text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
             <CheckCircle className="w-4 h-4" />
@@ -154,18 +145,18 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
           filteredDiagnostics.map((diagnostic, index) => (
             <div
               key={`${diagnostic.patientId}-${index}`}
-              className="bg-[#2a303c] p-6 rounded-lg hover:bg-[#2d3544] transition-colors"
+              className="bg-white p-6 rounded-lg hover:bg-gray-50 transition-colors shadow-sm border border-gray-200"
             >
               <div className="flex justify-between items-start mb-4">
                 <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
-                    <User className="w-6 h-6 text-blue-500" />
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <User className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="text-white font-medium flex items-center gap-2">
+                    <h3 className="text-gray-800 font-medium flex items-center gap-2">
                       {diagnostic.patientName}
                     </h3>
-                    <div className="flex items-center gap-3 text-gray-400 text-sm mt-1">
+                    <div className="flex items-center gap-3 text-gray-500 text-sm mt-1">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
                         {diagnostic.date}
@@ -176,8 +167,8 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
                 <span
                   className={`px-3 py-1 rounded-full text-sm flex items-center gap-2 ${
                     diagnostic.status === "en_attente"
-                      ? "bg-yellow-500/20 text-yellow-500"
-                      : "bg-green-500/20 text-green-500"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-green-100 text-green-800"
                   }`}
                 >
                   {diagnostic.status === "en_attente" ? (
@@ -194,27 +185,25 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
                 </span>
               </div>
 
-              <div className="space-y-2 mb-4 bg-[#1e242f] p-4 rounded-lg">
+              <div className="space-y-2 mb-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
                 <div className="space-y-4">
-                  {/* Symptômes principaux */}
-                  <div className="border-b border-gray-700 pb-4">
-                    <h4 className="text-blue-400 font-medium mb-2 flex items-center gap-2">
+                  <div className="border-b border-gray-300 pb-4">
+                    <h4 className="text-blue-600 font-medium mb-2 flex items-center gap-2">
                       <AlertCircle className="w-5 h-5" />
                       Symptômes Principaux
                     </h4>
-                    <p className="text-gray-300">
+                    <p className="text-gray-700">
                       {diagnostic.symptoms
                         .split("**SYNTHÈSE DES SYMPTÖMES**")[1]
                         ?.split("**")[0] || diagnostic.symptoms}
                     </p>
                   </div>
 
-                  {/* Diagnostic préliminaire */}
                   {diagnostic.symptoms.includes(
                     "**DIAGNOSTIC PRÉLIMINAIRE**"
                   ) && (
-                    <div className="border-b border-gray-700 pb-4">
-                      <h4 className="text-green-400 font-medium mb-2 flex items-center gap-2">
+                    <div className="border-b border-gray-300 pb-4">
+                      <h4 className="text-green-600 font-medium mb-2 flex items-center gap-2">
                         <ClipboardList className="w-5 h-5" />
                         Diagnostic Préliminaire
                       </h4>
@@ -227,17 +216,16 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
                           .map((item, index) => (
                             <div key={index} className="flex items-start gap-2">
                               <div className="w-2 h-2 rounded-full bg-green-500 mt-2"></div>
-                              <p className="text-gray-300">{item.trim()}</p>
+                              <p className="text-gray-700">{item.trim()}</p>
                             </div>
                           ))}
                       </div>
                     </div>
                   )}
 
-                  {/* Recommandations */}
                   {diagnostic.symptoms.includes("**RECOMMANDATIONS**") && (
-                    <div className="border-b border-gray-700 pb-4">
-                      <h4 className="text-yellow-400 font-medium mb-2 flex items-center gap-2">
+                    <div className="border-b border-gray-300 pb-4">
+                      <h4 className="text-yellow-600 font-medium mb-2 flex items-center gap-2">
                         <FileText className="w-5 h-5" />
                         Recommandations
                       </h4>
@@ -250,17 +238,16 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
                           .map((item, index) => (
                             <div key={index} className="flex items-start gap-2">
                               <div className="w-2 h-2 rounded-full bg-yellow-500 mt-2"></div>
-                              <p className="text-gray-300">{item.trim()}</p>
+                              <p className="text-gray-700">{item.trim()}</p>
                             </div>
                           ))}
                       </div>
                     </div>
                   )}
 
-                  {/* Conseils pratiques */}
                   {diagnostic.symptoms.includes("**CONSEILS PRATIQUES**") && (
                     <div>
-                      <h4 className="text-blue-400 font-medium mb-2 flex items-center gap-2">
+                      <h4 className="text-blue-600 font-medium mb-2 flex items-center gap-2">
                         <AlertCircle className="w-5 h-5" />
                         Conseils Pratiques
                       </h4>
@@ -273,7 +260,7 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
                           .map((item, index) => (
                             <div key={index} className="flex items-start gap-2">
                               <div className="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
-                              <p className="text-gray-300">{item.trim()}</p>
+                              <p className="text-gray-700">{item.trim()}</p>
                             </div>
                           ))}
                       </div>
@@ -304,7 +291,6 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
           ))
         ) : (
           <div key="ordonnance-view">
-            {" "}
             <button
               onClick={() => {
                 setShowOrdonnance(false);
@@ -317,23 +303,22 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
             </button>
             <OrdonnaceDoctor
               diagnostic={selectedDiagnostic || undefined}
-              doctorName={doctorName} // Use the state variable here
+              doctorName={doctorName}
             />
           </div>
         )}
       </div>
 
-      {/* Add modal at the end of the component */}
       {isEditModalOpen && editingDiagnostic && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#2a303c] p-6 rounded-lg w-full max-w-2xl mx-4">
-            <h3 className="text-xl font-semibold text-white mb-4">
+          <div className="bg-white p-6 rounded-lg w-full max-w-2xl mx-4 shadow-xl">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
               Modifier les symptômes
             </h3>
             <textarea
               value={editedSymptoms}
               onChange={(e) => setEditedSymptoms(e.target.value)}
-              className="w-full h-48 bg-[#1e242f] text-white rounded-lg p-4 mb-4 resize-none"
+              className="w-full h-48 bg-gray-50 text-gray-800 rounded-lg p-4 mb-4 resize-none border border-gray-300"
               placeholder="Entrez les nouveaux symptômes..."
             />
             <div className="flex justify-end gap-3">
@@ -343,11 +328,10 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
                   setEditingDiagnostic(null);
                   setEditedSymptoms("");
                 }}
-                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
               >
                 Annuler
               </button>
-              // Update the save button in the modal
               <button
                 onClick={() => {
                   if (editingDiagnostic && editedSymptoms.trim()) {
@@ -373,23 +357,3 @@ const DiagnosticDoctor: React.FC<DiagnosticDoctorProps> = ({
 };
 
 export default DiagnosticDoctor;
-
-// Add this method
-const handleAppointmentCancellation = async (patientId: number) => {
-  try {
-    // Update local state
-    const updatedDiagnostics = diagnostics.filter(
-      (d) => d.patientId !== patientId
-    );
-
-    // Notify parent component
-    if (onAppointmentCancel) {
-      onAppointmentCancel(patientId);
-    }
-
-    toast.success("Rendez-vous annulé avec succès");
-  } catch (error) {
-    console.error("Erreur lors de l'annulation:", error);
-    toast.error("Erreur lors de l'annulation du rendez-vous");
-  }
-};

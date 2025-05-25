@@ -241,11 +241,11 @@ const ChatBot: React.FC = () => {
   };
 
   return (
-    <div className="h-[600px] bg-[#1e242f] rounded-lg p-6 flex flex-col">
+    <div className="h-[600px] bg-white rounded-lg p-6 flex flex-col border border-gray-200 shadow-sm">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <Brain className="w-8 h-8 text-blue-500" />
-          <h2 className="text-2xl font-bold text-white">
+          <h2 className="text-2xl font-bold text-gray-800">
             Bonjour ! Je suis votre assistant médical
           </h2>
         </div>
@@ -261,7 +261,7 @@ const ChatBot: React.FC = () => {
       <div className="p-6 rounded-xl mb-6">
         <div className="flex items-start gap-3">
           <Stethoscope className="w-6 h-6 text-green-500 mt-1" />
-          <p className="text-gray-300">
+          <p className="text-gray-600">
             Je vous invite à bien répondre aux questions pour nous permettre
             d'établir un diagnostic adapté à votre situation.
           </p>
@@ -284,10 +284,10 @@ const ChatBot: React.FC = () => {
             <div
               className={`rounded-lg p-4 max-w-[80%] ${
                 message.type === "answer"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-blue-100 text-blue-800"
                   : message.type === "diagnostic"
-                  ? "bg-green-600/20 text-white border border-green-500/30"
-                  : "bg-[#2a303c] text-white"
+                  ? "bg-green-100 text-green-800 border border-green-300"
+                  : "bg-gray-100 text-gray-800"
               }`}
             >
               <p className="whitespace-pre-line">{message.content}</p>
@@ -312,14 +312,14 @@ const ChatBot: React.FC = () => {
         )}
 
         {assignedDoctor && !showAppointmentConfirm && (
-          <div className="bg-blue-600/20 p-4 rounded-lg mt-4">
-            <h3 className="text-white font-semibold mb-2">
+          <div className="bg-blue-100 p-4 rounded-lg mt-4 border border-blue-200">
+            <h3 className="text-blue-800 font-semibold mb-2">
               Médecin assigné: Dr. {assignedDoctor.noms}
             </h3>
-            <p className="text-gray-300 mb-2">
+            <p className="text-gray-600 mb-2">
               Spécialité: {assignedDoctor.specialite}
             </p>
-            <p className="text-gray-300 mb-3">
+            <p className="text-gray-600 mb-3">
               Date proposée: {appointmentDateTime?.date} à{" "}
               {appointmentDateTime?.time}
             </p>
@@ -333,11 +333,11 @@ const ChatBot: React.FC = () => {
         )}
 
         {showAppointmentConfirm && assignedDoctor && (
-          <div className="bg-green-600/20 p-4 rounded-lg mt-4 border border-green-500/30">
-            <h3 className="text-white font-semibold mb-2">
+          <div className="bg-green-100 p-4 rounded-lg mt-4 border border-green-300">
+            <h3 className="text-green-800 font-semibold mb-2">
               Confirmer le rendez-vous avec Dr. {assignedDoctor.noms}
             </h3>
-            <p className="text-gray-300 mb-3">
+            <p className="text-gray-700 mb-3">
               Pour le {appointmentDateTime?.date} à {appointmentDateTime?.time}
             </p>
             <div className="flex gap-3 mt-3">
@@ -365,7 +365,7 @@ const ChatBot: React.FC = () => {
           onChange={(e) => setCurrentInput(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && !isLoading && handleSubmit()}
           placeholder="Répondez à la question..."
-          className="flex-1 bg-[#2a303c] text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 bg-white text-gray-800 border border-gray-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
           disabled={isLoading}
         />
         <button

@@ -99,8 +99,8 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
     type: "text" | "email" | "select" | "textarea" = "text"
   ) => {
     return (
-      <div className="bg-[#1e242f] p-4 rounded-lg hover:border-blue-500 border border-transparent transition-all duration-300">
-        <label className="block text-gray-400 text-sm mb-2 flex items-center gap-2">
+      <div className="bg-gray-50 p-4 rounded-lg hover:border-blue-500 border border-gray-200 transition-all duration-300">
+        <label className="block text-gray-600 text-sm mb-2 flex items-center gap-2">
           {icon}
           {label}
         </label>
@@ -111,10 +111,10 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                 name={name}
                 value={value}
                 onChange={handleChange}
-                className={`w-full bg-[#2a303c] text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 h-32 ${
+                className={`w-full bg-white text-gray-800 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 h-32 border ${
                   errors[name as keyof typeof errors]
                     ? "border-red-500 focus:ring-red-500"
-                    : "focus:ring-blue-500"
+                    : "border-gray-300 focus:ring-blue-500"
                 }`}
               />
             ) : type === "select" ? (
@@ -122,10 +122,10 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                 name={name}
                 value={value}
                 onChange={handleChange}
-                className={`w-full bg-[#2a303c] text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 ${
+                className={`w-full bg-white text-gray-800 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 border ${
                   errors[name as keyof typeof errors]
                     ? "border-red-500 focus:ring-red-500"
-                    : "focus:ring-blue-500"
+                    : "border-gray-300 focus:ring-blue-500"
                 }`}
               >
                 <option value="">Sélectionnez</option>
@@ -138,10 +138,10 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                 name={name}
                 value={value}
                 onChange={handleChange}
-                className={`w-full bg-[#2a303c] text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 ${
+                className={`w-full bg-white text-gray-800 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 border ${
                   errors[name as keyof typeof errors]
                     ? "border-red-500 focus:ring-red-500"
-                    : "focus:ring-blue-500"
+                    : "border-gray-300 focus:ring-blue-500"
                 }`}
               />
             )}
@@ -152,7 +152,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
             )}
           </div>
         ) : (
-          <p className="text-white font-medium">
+          <p className="text-gray-800 font-medium">
             {name === "sexe" ? (value === "M" ? "Homme" : "Femme") : value}
           </p>
         )}
@@ -195,7 +195,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
 
       const successMessage = document.createElement("div");
       successMessage.className =
-        "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg";
+        "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md";
       successMessage.textContent = "Profil mis à jour avec succès";
       document.body.appendChild(successMessage);
       setTimeout(() => successMessage.remove(), 3000);
@@ -206,17 +206,17 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-        <UserCircle className="w-6 h-6 text-blue-500" />
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <UserCircle className="w-6 h-6 text-blue-600" />
         Mon Profil
       </h2>
 
       <form
         onSubmit={handleSubmit}
-        className="bg-[#2a303c] rounded-xl p-8 space-y-8 border border-gray-700"
+        className="bg-white rounded-xl p-8 space-y-8 shadow-sm border border-gray-200"
       >
         {error && (
-          <div className="bg-red-500/10 text-red-500 p-4 rounded-lg flex items-center gap-2">
+          <div className="bg-red-100 text-red-600 p-4 rounded-lg flex items-center gap-2 border border-red-200">
             <AlertCircle className="w-5 h-5" />
             {error}
           </div>
@@ -227,10 +227,10 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
             {formData.noms[0]}
           </div>
           <div>
-            <h3 className="text-2xl font-semibold text-white">
+            <h3 className="text-2xl font-semibold text-gray-800">
               {formData.noms}
             </h3>
-            <p className="text-gray-400 flex items-center gap-2 mt-1">
+            <p className="text-gray-600 flex items-center gap-2 mt-1">
               <Stethoscope className="w-4 h-4" />
               Médecin - {formData.specialite}
             </p>
@@ -242,42 +242,42 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
             "Email",
             "email",
             formData.email,
-            <Mail className="w-4 h-4 text-blue-400" />,
+            <Mail className="w-4 h-4 text-blue-600" />,
             "email"
           )}
           {renderField(
             "Téléphone",
             "phone",
             formData.phone,
-            <Phone className="w-4 h-4 text-green-400" />
+            <Phone className="w-4 h-4 text-green-600" />
           )}
           {renderField(
             "Adresse",
             "adresse",
             formData.adresse,
-            <MapPin className="w-4 h-4 text-red-400" />
+            <MapPin className="w-4 h-4 text-red-600" />
           )}
           {renderField(
             "Sexe",
             "sexe",
             formData.sexe,
-            <User className="w-4 h-4 text-yellow-400" />,
+            <User className="w-4 h-4 text-yellow-600" />,
             "select"
           )}
           {renderField(
             "Spécialité",
             "specialite",
             formData.specialite,
-            <Stethoscope className="w-4 h-4 text-purple-400" />
+            <Stethoscope className="w-4 h-4 text-purple-600" />
           )}
         </div>
 
-        <div className="pt-6 border-t border-gray-700">
+        <div className="pt-6 border-t border-gray-200">
           {isEditing ? (
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="flex-1 bg-green-600 text-white rounded-lg py-3 hover:bg-green-700 transition-all duration-300 flex items-center justify-center gap-2 font-medium"
+                className="flex-1 bg-green-600 text-white rounded-lg py-3 hover:bg-green-700 transition-all duration-300 flex items-center justify-center gap-2 font-medium shadow-sm"
               >
                 <Save className="w-4 h-4" />
                 Enregistrer
@@ -297,7 +297,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
                     description: user.description,
                   });
                 }}
-                className="flex-1 bg-red-600 text-white rounded-lg py-3 hover:bg-red-700 transition-all duration-300 flex items-center justify-center gap-2 font-medium"
+                className="flex-1 bg-red-600 text-white rounded-lg py-3 hover:bg-red-700 transition-all duration-300 flex items-center justify-center gap-2 font-medium shadow-sm"
               >
                 <X className="w-4 h-4" />
                 Annuler
@@ -307,7 +307,7 @@ const Profile: React.FC<ProfileProps> = ({ user }) => {
             <button
               type="button"
               onClick={() => setIsEditing(true)}
-              className="w-full bg-blue-600 text-white rounded-lg py-3 hover:bg-blue-700 transition-all duration-300 flex items-center justify-center gap-2 font-medium"
+              className="w-full bg-blue-600 text-white rounded-lg py-3 hover:bg-blue-700 transition-all duration-300 flex items-center justify-center gap-2 font-medium shadow-sm"
             >
               <Edit2 className="w-4 h-4" />
               Modifier mon profil

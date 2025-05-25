@@ -22,12 +22,8 @@ import {
 } from "recharts";
 import toast from "react-hot-toast";
 import axios from "axios";
-
-// Define PDF styles
-// Add Font registration
 import { Font } from "@react-pdf/renderer";
 
-// Register font to avoid font-related errors
 Font.register({
   family: "Roboto",
   src: "https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-light-webfont.ttf",
@@ -218,22 +214,22 @@ const Rapport = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold text-white">
+        <h2 className="text-2xl font-semibold text-gray-800">
           Rapports et Statistiques
         </h2>
       </div>
 
-      <div className="bg-[#2a303c] p-6 rounded-lg">
-        <h3 className="text-xl font-semibold text-white mb-4">
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <h3 className="text-xl font-semibold text-gray-800 mb-4">
           Générer un rapport
         </h3>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-gray-400 mb-2">Type de Rapport</label>
+            <label className="block text-gray-600 mb-2">Type de Rapport</label>
             <select
               value={reportType}
               onChange={(e) => setReportType(e.target.value)}
-              className="w-full bg-gray-700 text-white rounded p-2"
+              className="w-full bg-gray-50 text-gray-800 rounded p-2 border border-gray-300"
             >
               <option value="general">Rapport Général</option>
               <option value="doctors">Rapport des Médecins</option>
@@ -244,7 +240,7 @@ const Rapport = () => {
           </div>
 
           <div>
-            <label className="block text-gray-400 mb-2">Période</label>
+            <label className="block text-gray-600 mb-2">Période</label>
             <div className="grid grid-cols-2 gap-4">
               <input
                 type="date"
@@ -252,7 +248,7 @@ const Rapport = () => {
                 onChange={(e) =>
                   setDateRange({ ...dateRange, start: e.target.value })
                 }
-                className="bg-gray-700 text-white rounded p-2"
+                className="bg-gray-50 text-gray-800 rounded p-2 border border-gray-300"
               />
               <input
                 type="date"
@@ -260,7 +256,7 @@ const Rapport = () => {
                 onChange={(e) =>
                   setDateRange({ ...dateRange, end: e.target.value })
                 }
-                className="bg-gray-700 text-white rounded p-2"
+                className="bg-gray-50 text-gray-800 rounded p-2 border border-gray-300"
               />
             </div>
           </div>
@@ -280,7 +276,7 @@ const Rapport = () => {
               .replace(/\//g, "-")}.pdf`}
           >
             {({ loading }) => (
-              <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+              <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                 {loading ? (
                   <>
                     <FileText className="w-5 h-5" />
